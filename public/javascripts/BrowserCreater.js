@@ -75,7 +75,6 @@ getBrowserWSEndpoint = function () {
                                     puppeteer.connect({browserWSEndpoint}).then(browser => {
                                         setTimeout(function(){
                                             browser.close();
-                                            browser.get
                                             browser = null;
                                         },10000)
                                        
@@ -190,13 +189,13 @@ broswerQueue.isCheckBrowser = false;
 
 
 //0 0 0/1 * * ? 
-startSchedule = function(){
+function startSchedule  (){
     schedule.scheduleJob('0 0 0/1 * *', function () {
         //定时执行的代码
         try {
             broswerQueue.isCheckBrowser = true;
             infoLog.info("定时器开始检测browser,WSE_LIST.length=" + WSE_LIST.length)
-            if (WSE_LIST && WSE_LIST.length) {
+            if (WSE_LIST && WSE_LIST.length > 0) {
                 for (let i = 0; i < WSE_LIST.length; i++) {
                     let wseObject = WSE_LIST[i];
                     if (wseObject) {
