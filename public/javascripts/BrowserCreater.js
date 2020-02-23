@@ -71,9 +71,13 @@ getBrowserWSEndpoint = function () {
                         if (delBrowser && delBrowser.length > 0) {
                             delBrowser.forEach(ele => {
                                 try {
-                                    infoLog.info("browser数组WSE_LIST中第" + i + "个已使用超过2" + maxCrawlerCount + "次，将其删除");
-                                    ele.close();
-                                    ele = null;
+                                    infoLog.info("browser数组WSE_LIST中第" + i + "个已使用超过" + maxCrawlerCount + "次，将其删除");
+                                    let browserWSEndpoint = ele.browserWSEndpoint;
+                                    puppeteer.connect({browserWSEndpoint}).then(browser => {
+                                        browser.close();
+                                        browser = null;
+                                    })
+                                    
                                 } catch (error) {
                                     errorLog.error("关闭浏览器出错：", error);
                                 }
@@ -199,8 +203,11 @@ schedule.scheduleJob('0 0 0/1 * * ? ', function () {
                             delBrowser.forEach(ele => {
                                 try {
                                     infoLog.info("定时器检测到第" + i + "个browser超过1小时,将其删除");
-                                    ele.close();
-                                    ele = null;
+                                    let browserWSEndpoint = ele.browserWSEndpoint;
+                                    puppeteer.connect({browserWSEndpoint}).then(browser => {
+                                        browser.close();
+                                        browser = null;
+                                    })
                                 } catch (error) {
                                     errorLog.error("关闭浏览器出错：", error);
                                 }
