@@ -31,7 +31,7 @@ function initBrowser(num) {
             for (let i = 0; i < creatCount; i++) {
 
             puppeteer.launch({
-                    headless: false,
+                    headless: true,
                     args: [
                         '--no-sandbox', '--disable-setuid-sandbox', '–-disable-gpu', '--use-gl=swiftshader', '--disable-gl-drawing-for-tests', '--blik-settings=doHtmlPreloadScanning=false'
                     ]
