@@ -9,9 +9,7 @@
             "public",
             "routes",
             "views"
-        ],
-        "instances" : "3",
-        "exec_mode" : "cluster"
+        ]
     }
   ]
 }
