@@ -39,7 +39,7 @@ puppeteerCrawler = {
                                 })
                             }).catch(error => {
                                 resolve("爬不到网页");
-                                errorLog.error("TimeoutError: Navigation timeout of 6000 ms exceeded");
+                                errorLog.error("TimeoutError: Navigation timeout of 6000 ms exceeded",error);
                                 if (!page.isClosed()) {
                                     page.close();
                                 }
@@ -52,7 +52,7 @@ puppeteerCrawler = {
     
                 }).catch(error => {
                     resolve("爬不到网页");
-                    errorLog.error(error)
+                    errorLog.error("connect出错：",error);
                     
                 })
                 // WSE_LIST.push(wse);

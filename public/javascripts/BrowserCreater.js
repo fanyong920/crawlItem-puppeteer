@@ -15,6 +15,7 @@ const maxCrawlerCount = (appConfig.maxCrawlerCount && appConfig.maxCrawlerCount 
 const MAX_WSE = appConfig.MAX_WSE == 0 ? 3 : appConfig.MAX_WSE;  //启动几个浏览器 
 const WSE_LIST = []; //存储browserWSEndpoint列表
 initBrowser();
+startSchedule();//开启定时任务
 /**
  * 初始化browser
  * @param {创建broswer数量} num 
@@ -44,10 +45,8 @@ function initBrowser(num) {
                     infoLog.info("MAX_WSE:",MAX_WSE);
                     if (WSE_LIST.length < MAX_WSE) {
                         WSE_LIST.push(wseObject);
-                        infoLog.info("push");
                     } else {
                         browser.close();
-                        infoLog.info("close");
                     }
                 });
                 
@@ -74,8 +73,12 @@ getBrowserWSEndpoint = function () {
                                     infoLog.info("browser数组WSE_LIST中第" + i + "个已使用超过" + maxCrawlerCount + "次，将其删除");
                                     let browserWSEndpoint = ele.browserWSEndpoint;
                                     puppeteer.connect({browserWSEndpoint}).then(browser => {
-                                        browser.close();
-                                        browser = null;
+                                        setTimeout(function(){
+                                            browser.close();
+                                            browser.get
+                                            browser = null;
+                                        },10000)
+                                       
                                     })
                                     
                                 } catch (error) {
@@ -187,46 +190,49 @@ broswerQueue.isCheckBrowser = false;
 
 
 //0 0 0/1 * * ? 
-schedule.scheduleJob('0 0 0/1 * * ? ', function () {
-    //定时执行的代码
-    try {
-        broswerQueue.isCheckBrowser = true;
-        infoLog.info("定时器开始检测browser,WSE_LIST.length=" + WSE_LIST.length)
-        if (WSE_LIST && WSE_LIST.length) {
-            for (let i = 0; i < WSE_LIST.length; i++) {
-                let wseObject = WSE_LIST[i];
-                if (wseObject) {
-                    let isShhouldClose = dateUtil.compareTimeWithInterval(wseObject.date, new Date(), 1);
-                    if (isShhouldClose) {
-                        let delBrowser = WSE_LIST.splice(i, 1);
-                        if (delBrowser && delBrowser.length > 0) {
-                            delBrowser.forEach(ele => {
-                                try {
-                                    infoLog.info("定时器检测到第" + i + "个browser超过1小时,将其删除");
-                                    let browserWSEndpoint = ele.browserWSEndpoint;
-                                    puppeteer.connect({browserWSEndpoint}).then(browser => {
-                                        browser.close();
-                                        browser = null;
-                                    })
-                                } catch (error) {
-                                    errorLog.error("关闭浏览器出错：", error);
-                                }
-
-                            })
+startSchedule = function(){
+    schedule.scheduleJob('0 0 0/1 * *', function () {
+        //定时执行的代码
+        try {
+            broswerQueue.isCheckBrowser = true;
+            infoLog.info("定时器开始检测browser,WSE_LIST.length=" + WSE_LIST.length)
+            if (WSE_LIST && WSE_LIST.length) {
+                for (let i = 0; i < WSE_LIST.length; i++) {
+                    let wseObject = WSE_LIST[i];
+                    if (wseObject) {
+                        let isShhouldClose = dateUtil.compareTimeWithInterval(wseObject.date, new Date(), 1);
+                        if (isShhouldClose) {
+                            let delBrowser = WSE_LIST.splice(i, 1);
+                            if (delBrowser && delBrowser.length > 0) {
+                                delBrowser.forEach(ele => {
+                                    try {
+                                        infoLog.info("定时器检测到第" + i + "个browser超过1小时,将其删除");
+                                        let browserWSEndpoint = ele.browserWSEndpoint;
+                                        puppeteer.connect({browserWSEndpoint}).then(browser => {
+                                            browser.close();
+                                            browser = null;
+                                        })
+                                    } catch (error) {
+                                        errorLog.error("关闭浏览器出错：", error);
+                                    }
+    
+                                })
+                            }
+                            i--;
                         }
+                    } else {
+                        WSE_LIST.splice(i, 1);
                         i--;
                     }
-                } else {
-                    WSE_LIST.splice(i, 1);
-                    i--;
                 }
             }
+    
+        } catch (error) {
+            errorLog.error("定时器关闭浏览器出错：", error);
+        } finally {
+            broswerQueue.isCheckBrowser = false;
         }
+    });
+}
 
-    } catch (error) {
-        errorLog.error("定时器关闭浏览器出错：", error);
-    } finally {
-        broswerQueue.isCheckBrowser = false;
-    }
-});
 module.exports = broswerQueue;

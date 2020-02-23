@@ -14,8 +14,8 @@ log4js.configure({
     daysToKeep:3,//保留3天日志
     alwaysIncludePattern: true,//在当前日志文件以及备份文件的名称中包含模式
     pm2:true,
-    pm2InstanceVar:"NODE_APP_INSTANCE",
-    disableClustering: true
+    pm2InstanceVar:"INSTANCE_ID",
+
   });
   
 
