@@ -1,0 +1,17 @@
+{
+  "apps":[
+    {
+      "name": "crawler",
+      "cwd": "./",
+      "exec": "./bin/www",
+      "watch":[
+            "bin",
+            "public",
+            "routes",
+            "views"
+        ]
+    }
+  ]
+}
+
+  
