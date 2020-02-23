@@ -20,33 +20,41 @@ initBrowser();
  * @param {创建broswer数量} num 
  */
 function initBrowser(num) {
-    (async () => {
-        let creatCount = 0;
-        if (num && num != 0) {
-            creatCount = num;
-        } else {
-            creatCount = MAX_WSE;
-        }
-        for (var i = 0; i < creatCount; i++) {
-            const browser = await puppeteer.launch({
-                headless: true,
-                args: [
-                    '--no-sandbox', '--disable-setuid-sandbox', '–-disable-gpu', '--use-gl=swiftshader', '--disable-gl-drawing-for-tests', '--blik-settings=doHtmlPreloadScanning=false'
-                ]
-            })
-            let wseObject = {};
-            browserWSEndpoint = await browser.wsEndpoint();
-            wseObject.browserWSEndpoint = browserWSEndpoint;
-            wseObject.crawlerCount = 0;
-            wseObject.date = new Date();
-            if (WSE_LIST.length < MAX_WSE) {
-                WSE_LIST.push(wseObject);
+        return new Promise((resolve) => {
+            let creatCount = 0;
+            if (num && num != 0) {
+                creatCount = num;
             } else {
-                browser.close();
+                creatCount = MAX_WSE;
             }
-        }
-        infoLog.info(WSE_LIST);
-    })();
+            infoLog.info("creatCount="+creatCount)
+            for (let i = 0; i < creatCount; i++) {
+
+            puppeteer.launch({
+                    headless: false,
+                    args: [
+                        '--no-sandbox', '--disable-setuid-sandbox', '–-disable-gpu', '--use-gl=swiftshader', '--disable-gl-drawing-for-tests', '--blik-settings=doHtmlPreloadScanning=false'
+                    ]
+                }).then((browser) => {
+                    let wseObject = {};
+                    let browserWSEndpoint =  browser.wsEndpoint();
+                    wseObject.browserWSEndpoint = browserWSEndpoint;
+                    wseObject.crawlerCount = 0;
+                    wseObject.date = new Date();
+                    infoLog.info("MAX_WSE:",MAX_WSE);
+                    if (WSE_LIST.length < MAX_WSE) {
+                        WSE_LIST.push(wseObject);
+                        infoLog.info("push");
+                    } else {
+                        browser.close();
+                        infoLog.info("close");
+                    }
+                });
+                
+            }
+            infoLog.info("WSE_LIST:",WSE_LIST.length);
+        })
+        
 }
 /**
  * 获取一个BrowserWSEndpoint
@@ -108,10 +116,10 @@ getBrowserWSEndpoint = function () {
                 }
             }
         } else {
-            initBrowser().then(() => {
+            initBrowser(1).then(() => {
                 resolve(WSE_LIST[0]);
             });
-
+            needLanchCount = 2;
         }
 
         if (needLanchCount != 0) {
@@ -127,7 +135,7 @@ getBrowserWSEndpoint = function () {
    */
 const broswerQueue = async.queue(function (wseReq, callback) {
     // 需要执行的代码的回调函数
-    if (broswerQueue.isCheckBrowser === true) {
+    if (broswerQueue.isCheckBrowser === false) {
         getBrowserWSEndpoint().then(wse => {
             if (typeof callback === 'function') {
                 callback(wse);
@@ -136,7 +144,7 @@ const broswerQueue = async.queue(function (wseReq, callback) {
     } else {
         infoLog.info("定时器正在检查browser，线程进入等待时间...")
         setTimeout(function () {
-            if (broswerQueue.isCheckBrowser === true) {
+            if (broswerQueue.isCheckBrowser === false) {
                 infoLog.info("3s定时器检查browser结束，线程重新工作...")
                 getBrowserWSEndpoint().then(wse => {
                     if (typeof callback === 'function') {
