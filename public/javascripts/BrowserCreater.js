@@ -76,7 +76,7 @@ getBrowserWSEndpoint = function () {
                                         setTimeout(function(){
                                             browser.close();
                                             browser = null;
-                                        },10000)
+                                        },3000);
                                        
                                     })
                                     

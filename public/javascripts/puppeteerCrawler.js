@@ -16,7 +16,10 @@ puppeteerCrawler = {
                         // page.setDefaultNavigationTimeout(6000);
                         page.setRequestInterception(true).then(() => {
                             page.on('request', interceptedRequest => {
-                                if (interceptedRequest.url().endsWith('.png') || interceptedRequest.url().endsWith('.jpg') || interceptedRequest.url().indexOf('login') > -1)
+                                if (interceptedRequest.url().endsWith('.png') || interceptedRequest.url().endsWith('.jpg') || interceptedRequest.url().indexOf('login') > -1 || interceptedRequest.url().endsWith('.gif') || interceptedRequest.url().endsWith('.mp4') || interceptedRequest.url().endsWith('.svg') ||interceptedRequest.url().endsWith('.jpeg')
+                                ||interceptedRequest.url().endsWith('.webm') ||  interceptedRequest.url().endsWith('.ogg') ||interceptedRequest.url().endsWith('.mp3') ||interceptedRequest.url().endsWith('.wav')||interceptedRequest.url().endsWith('.flac') ||interceptedRequest.url().endsWith('.aac') 
+                                ||interceptedRequest.url().endsWith('.woff') ||  interceptedRequest.url().endsWith('.eot') ||interceptedRequest.url().endsWith('.ttf') ||interceptedRequest.url().endsWith('.otf')
+                                )
                                     interceptedRequest.abort();
                                 else
                                     interceptedRequest.continue();
