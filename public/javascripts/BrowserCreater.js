@@ -35,7 +35,9 @@ function initBrowser(num) {
                     headless: true,
                     args: [
                         '--no-sandbox', '--disable-setuid-sandbox', '–-disable-gpu', '--use-gl=swiftshader', '--disable-gl-drawing-for-tests', '--blik-settings=doHtmlPreloadScanning=false'
-                    ]
+                    ],
+                    ignoreDefaultArgs: ["--enable-automation"]
+                    // executablePath:"C:\\Users\\10230\\AppData\\Local\\Google\\Chrome\\Application\\chrome.exe"
                 }).then((browser) => {
                     let wseObject = {};
                     let browserWSEndpoint =  browser.wsEndpoint();
