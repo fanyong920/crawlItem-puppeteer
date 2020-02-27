@@ -6,8 +6,7 @@
 git https://github.com/fanyong920/crawlItem-puppeteer.git
 ```
 2. 安装依赖
-
-	```javaScript
+ ```javaScript
 cnpm install //npm install
 ```
 3. 启动项目
