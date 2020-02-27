@@ -33,3 +33,6 @@ Content-Type:application/json
     "url": "https://detail.tmall.com/item.htm?spm=a220o.1000855.w4023-21272238550.7.c8f34443QTZRqw&id=607562031325&sku_properties=122216443:6280099462"
 }
 ```
+### 网页速度
+在1核2G的阿里云机器上测试，平均打开网页的耗时500ms,如果电脑配置高，速度会更快。
+在加载网页的时候，我把图片，视频等多媒体资源都拦截了，所以会比平时打开网页快很多
