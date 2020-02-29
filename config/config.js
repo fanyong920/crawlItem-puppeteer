@@ -1,7 +1,7 @@
 const os = require('os');
 const log4js = require('../public/javascripts/util/log4jUtil')
 const infoLog = log4js.getLogger('infoLog');
-const num = (os.cpus().length)*2 + 4;
+const num = (os.cpus().length)*2 + 1;
 infoLog.log("系统将配置爬网页的并发数："+num);
 var appConfig ={
     MAX_BROWSER:3,//大考的浏览器实例
