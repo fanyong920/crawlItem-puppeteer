@@ -9,7 +9,7 @@ var appConfig ={
     maxCrawlerCount:1000,//一个网页打开多少个网页后关闭
     launchOptions:
     {
-        headless: false,
+        headless: true,
         args: [
             '--no-sandbox', '--disable-setuid-sandbox', '–-disable-gpu', '--use-gl=swiftshader', '--disable-gl-drawing-for-tests', '--blik-settings=doHtmlPreloadScanning=false'
         ],
