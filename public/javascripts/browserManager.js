@@ -7,7 +7,6 @@ const schedule = require('node-schedule');
 
 const infoLog = log4js.getLogger('infoLog');
 const errorLog = log4js.getLogger('errorLog');
-const maxCrawlerCount = (appConfig.maxCrawlerCount && appConfig.maxCrawlerCount == 0) ? 500 : appConfig.maxCrawlerCount;
 
 const launchOptions = appConfig.launchOptions;
 
@@ -17,17 +16,28 @@ const factory = {
     create: () =>
         puppeteer.launch(launchOptions).then(browser => {
             // 创建一个 puppeteer 实例 ，并且初始化使用次数为 0
-            infoLog.info("browser create:",browser.wsEndpoint())
+            infoLog.info("browser create",browser.wsEndpoint());
             browser.useCount = 0
             return browser
         }),
     destroy: browser => {
         setTimeout(function(){
+            infoLog.info("browser close",browser.wsEndpoint());
             browser.close()
-            infoLog.info("browser close:",browser.wsEndpoint())
         },2000)
         
     }
+    // validate: browser => {
+    //     // 执行一次自定义校验，并且校验校验 实例已使用次数。 当 返回 reject 时 表示实例不可用
+    //     return new Promise((resolve,reject) => {
+    //         if(maxCrawlerCount <= 0 || browser.useCount > maxCrawlerCount){
+    //             reject(false);
+
+    //         }else{
+    //             resolve(true);
+    //         }
+    //     })
+    // }
 }
 const config = {
     max: MAX_BROWSER,
@@ -41,7 +51,16 @@ const config = {
 }
 
 const pool = genericPool.createPool(factory, config)
+// const genericAcquire = pool.acquire.bind(pool)
 
+// const count = function(browser){
+//     browser.useCount += 1
+// }
+// pool.acquire = () =>
+//     genericAcquire().then(instance => {
+//       instance.useCount += 1
+//       return instance
+// })
 // pool.use = fn => {
 //     let resource
 //     return pool.acquire().then(r => {

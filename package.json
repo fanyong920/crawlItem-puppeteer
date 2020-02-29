@@ -12,6 +12,7 @@
     "debug": "~2.6.9",
     "ejs": "~2.6.1",
     "express": "~4.16.1",
+    "generic-pool": "^3.7.1",
     "http-errors": "~1.6.3",
     "log4js": "^6.1.2",
     "morgan": "~1.9.1",

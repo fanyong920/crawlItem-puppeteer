@@ -1,73 +1,97 @@
 
-const puppeteer = require('puppeteer');
-const broswerQueue = require('./browserCreater');
-const log4js = require('./log/log4jConfig');
+// const puppeteer = require('puppeteer');
+const broswerPool = require('./browserManager');
+const log4js = require('./util/log4jUtil');
 const errorLog = log4js.getLogger('errorLog');
+const appConfig = require('../../config/config');
 
 puppeteerCrawler = {
     crawlerPage: function (url) {
-        return new Promise((resolve, reject) => {
-            broswerQueue.push(true, wse => {
-                if (wse) {
-                    // console.log("从数组WSE_LIST中取出一个browserWSEndpoint，剩余" + WSE_LIST.length + "个browserWSEndpoint");
-                    let browserWSEndpoint = wse.browserWSEndpoint
-                    puppeteer.connect({ browserWSEndpoint }).then(browser => {
-                        browser.newPage().then(page => {
-                            // page.setDefaultNavigationTimeout(6000);
-                            page.setRequestInterception(true).then(() => {
-                                page.on('request', interceptedRequest => {
-                                    if (interceptedRequest.url().endsWith('.js') || interceptedRequest.url().endsWith('.png') || interceptedRequest.url().endsWith('.jpg') || /* interceptedRequest.url().indexOf('login') > -1 || */ interceptedRequest.url().endsWith('.gif') || interceptedRequest.url().endsWith('.mp4') || interceptedRequest.url().endsWith('.svg') || interceptedRequest.url().endsWith('.jpeg')
-                                        || interceptedRequest.url().endsWith('.webm') || interceptedRequest.url().endsWith('.ogg') || interceptedRequest.url().endsWith('.mp3') || interceptedRequest.url().endsWith('.wav') || interceptedRequest.url().endsWith('.flac') || interceptedRequest.url().endsWith('.aac')
-                                        || interceptedRequest.url().endsWith('.woff') || interceptedRequest.url().endsWith('.eot') || interceptedRequest.url().endsWith('.ttf') || interceptedRequest.url().endsWith('.otf')
-                                    )
-                                        interceptedRequest.abort();
-                                    else
-                                        interceptedRequest.continue();
-                                });
-                                page.goto(url, {
-                                    timeout: 10000,
-                                    waitUntil: ['domcontentloaded']
-                                }).then(() => {
-                                    page.content().then(content => {
-                                        if (content) {
-                                            resolve(content)
-                                        } else {
-                                            resolve("爬不到网页");
-                                        }
-                                        if (!page.isClosed()) {
-                                            page.close();
-                                        }
-                                    })
-                                }).catch(error => {
-                                    resolve("爬不到网页");
-                                    errorLog.error("TimeoutError: Navigation timeout of 6000 ms exceeded", error);
+        return new Promise((resolve) => {
+            broswerPool.acquire().then(browser => {
+                browser.useCount += 1;
+                if (browser.useCount >= appConfig.maxCrawlerCount) {
+                    browser.newPage().then(page => {
+                        page.setRequestInterception(true).then(() => {
+                            page.on('request', interceptedRequest => {
+                                // if (interceptedRequest.url().endsWith('.js') || interceptedRequest.url().endsWith('.png') || interceptedRequest.url().endsWith('.jpg') || /* interceptedRequest.url().indexOf('login') > -1 || */ interceptedRequest.url().endsWith('.gif') || interceptedRequest.url().endsWith('.mp4') || interceptedRequest.url().endsWith('.svg') || interceptedRequest.url().endsWith('.jpeg')
+                                //     || interceptedRequest.url().endsWith('.webm') || interceptedRequest.url().endsWith('.ogg') || interceptedRequest.url().endsWith('.mp3') || interceptedRequest.url().endsWith('.wav') || interceptedRequest.url().endsWith('.flac') || interceptedRequest.url().endsWith('.aac')
+                                //     || interceptedRequest.url().endsWith('.woff') || interceptedRequest.url().endsWith('.eot') || interceptedRequest.url().endsWith('.ttf') || interceptedRequest.url().endsWith('.otf')
+                                // )
+                                if (interceptedRequest.resourceType === 'image' || interceptedRequest.resourceType === 'font' || interceptedRequest.resourceType === 'script' || interceptedRequest.resourceType === 'media')
+                                    interceptedRequest.abort();
+                                else
+                                    interceptedRequest.continue();
+                            });
+                            page.goto(url, {
+                                timeout: 10000,
+                                waitUntil: ['domcontentloaded']
+                            }).then(() => {
+                                page.content().then(content => {
                                     if (!page.isClosed()) {
                                         page.close();
                                     }
-                                })
-
-
-
-
-
-
+                                    if (content) {
+                                        resolve({ isSuccess: true, message: content });
+                                    }
+                                    else {
+                                        resolve({ isSuccess: false, message: "爬到的网页内容为空" });
+                                    }
+                                    broswerPool.destroy(browser)
+                                });
+                            }).catch(error => {
+                                errorLog.error("TimeoutError: Navigation timeout of 10000 ms exceeded", error);
+                                if (!page.isClosed()) {
+                                    page.close();
+                                }
+                                broswerPool.destroy(browser)
+                                resolve({ isSuccess: false, message: JSON.stringify(error) });
                             });
-
-
-                        })
-
-                    }).catch(error => {
-                        resolve("爬不到网页");
-                        errorLog.error("connect出错：", error);
-
-                    })
-                    // WSE_LIST.push(wse);
-                    // console.log("中回收一个browserWSEndpoint到数组WSE_LIST，现有" + WSE_LIST.length + "个browserWSEndpoint");
+                        });
+                    });
                 } else {
-                    resolve("爬不到网页");
-                    errorLog.error('获取browserWSEndpoint为空');
+                    broswerPool.release(browser);
+                    browser.newPage().then(page => {
+                        page.setRequestInterception(true).then(() => {
+                            page.on('request', interceptedRequest => {
+                                // if (interceptedRequest.url().endsWith('.js') || interceptedRequest.url().endsWith('.png') || interceptedRequest.url().endsWith('.jpg') || /* interceptedRequest.url().indexOf('login') > -1 || */ interceptedRequest.url().endsWith('.gif') || interceptedRequest.url().endsWith('.mp4') || interceptedRequest.url().endsWith('.svg') || interceptedRequest.url().endsWith('.jpeg')
+                                //     || interceptedRequest.url().endsWith('.webm') || interceptedRequest.url().endsWith('.ogg') || interceptedRequest.url().endsWith('.mp3') || interceptedRequest.url().endsWith('.wav') || interceptedRequest.url().endsWith('.flac') || interceptedRequest.url().endsWith('.aac')
+                                //     || interceptedRequest.url().endsWith('.woff') || interceptedRequest.url().endsWith('.eot') || interceptedRequest.url().endsWith('.ttf') || interceptedRequest.url().endsWith('.otf')
+                                // )
+                                if (interceptedRequest.resourceType === 'image' || interceptedRequest.resourceType === 'font' || interceptedRequest.resourceType === 'script' || interceptedRequest.resourceType === 'media')
+                                    interceptedRequest.abort();
+                                else
+                                    interceptedRequest.continue();
+                            });
+                            page.goto(url, {
+                                timeout: 10000,
+                                waitUntil: ['domcontentloaded']
+                            }).then(() => {
+                                page.content().then(content => {
+                                    if (!page.isClosed()) {
+                                        page.close();
+                                    }
+                                    if (content) {
+                                        resolve({ isSuccess: true, message: content });
+                                    }
+                                    else {
+                                        resolve({ isSuccess: false, message: "爬到的网页内容为空" });
+                                    }
+
+                                });
+                            }).catch(error => {
+                                errorLog.error("TimeoutError: Navigation timeout of 10000 ms exceeded", error);
+                                if (!page.isClosed()) {
+                                    page.close();
+                                }
+                                resolve({ isSuccess: false, message: JSON.stringify(error) });
+                            });
+                        });
+                    });
                 }
+
             })
+
         })
     }
 }
