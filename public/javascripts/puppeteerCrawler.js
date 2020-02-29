@@ -52,7 +52,6 @@ puppeteerCrawler = {
                                 else {
                                     resolve({ isSuccess: false, message: "爬到的网页内容为空" });
                                 }
-
                             });
                         }).catch(error => {
                             errorLog.error("TimeoutError: Navigation timeout of 10000 ms exceeded", error);
