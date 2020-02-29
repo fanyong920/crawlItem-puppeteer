@@ -18,26 +18,27 @@ puppeteerCrawler = {
                                 //     || interceptedRequest.url().endsWith('.webm') || interceptedRequest.url().endsWith('.ogg') || interceptedRequest.url().endsWith('.mp3') || interceptedRequest.url().endsWith('.wav') || interceptedRequest.url().endsWith('.flac') || interceptedRequest.url().endsWith('.aac')
                                 //     || interceptedRequest.url().endsWith('.woff') || interceptedRequest.url().endsWith('.eot') || interceptedRequest.url().endsWith('.ttf') || interceptedRequest.url().endsWith('.otf')
                                 // )
-                                if (interceptedRequest.url().endsWith('.js') || 
-                                interceptedRequest.url().endsWith('.png') || 
-                                interceptedRequest.url().endsWith('.jpg') || 
-                                interceptedRequest.url().endsWith('.webp') || 
-                                interceptedRequest.url().endsWith('.ico') || 
-                                /* interceptedRequest.url().indexOf('login') > -1 || */ 
-                                interceptedRequest.url().endsWith('.gif') || 
-                                interceptedRequest.url().endsWith('.mp4') || 
-                                interceptedRequest.url().endsWith('.svg') || 
-                                interceptedRequest.url().endsWith('.jpeg')
-                                || interceptedRequest.url().endsWith('.webm') || 
-                                interceptedRequest.url().endsWith('.ogg') || 
-                                interceptedRequest.url().endsWith('.mp3') || 
-                                interceptedRequest.url().endsWith('.wav') || 
-                                interceptedRequest.url().endsWith('.flac') || 
-                                interceptedRequest.url().endsWith('.aac') || 
-                                interceptedRequest.url().endsWith('.woff') || 
-                                interceptedRequest.url().endsWith('.eot') || 
-                                interceptedRequest.url().endsWith('.ttf') || 
-                                interceptedRequest.url().endsWith('.otf'))
+                                // if (interceptedRequest.url().endsWith('.js') || 
+                                // interceptedRequest.url().endsWith('.png') || 
+                                // interceptedRequest.url().endsWith('.jpg') || 
+                                // interceptedRequest.url().endsWith('.webp') || 
+                                // interceptedRequest.url().endsWith('.ico') || 
+                                // /* interceptedRequest.url().indexOf('login') > -1 || */ 
+                                // interceptedRequest.url().endsWith('.gif') || 
+                                // interceptedRequest.url().endsWith('.mp4') || 
+                                // interceptedRequest.url().endsWith('.svg') || 
+                                // interceptedRequest.url().endsWith('.jpeg')
+                                // || interceptedRequest.url().endsWith('.webm') || 
+                                // interceptedRequest.url().endsWith('.ogg') || 
+                                // interceptedRequest.url().endsWith('.mp3') || 
+                                // interceptedRequest.url().endsWith('.wav') || 
+                                // interceptedRequest.url().endsWith('.flac') || 
+                                // interceptedRequest.url().endsWith('.aac') || 
+                                // interceptedRequest.url().endsWith('.woff') || 
+                                // interceptedRequest.url().endsWith('.eot') || 
+                                // interceptedRequest.url().endsWith('.ttf') || 
+                                // interceptedRequest.url().endsWith('.otf'))
+                                if (interceptedRequest.resourceType() === 'image' || interceptedRequest.resourceType() === 'font' || interceptedRequest.resourceType() === 'script' || interceptedRequest.resourceType() === 'media')
                                     interceptedRequest.abort();
                                 else
                                     interceptedRequest.continue();
@@ -73,32 +74,29 @@ puppeteerCrawler = {
                     browser.newPage().then(page => {
                         page.setRequestInterception(true).then(() => {
                             page.on('request', interceptedRequest => {
-                                // if (interceptedRequest.url().endsWith('.js') || interceptedRequest.url().endsWith('.png') || interceptedRequest.url().endsWith('.jpg') || /* interceptedRequest.url().indexOf('login') > -1 || */ interceptedRequest.url().endsWith('.gif') || interceptedRequest.url().endsWith('.mp4') || interceptedRequest.url().endsWith('.svg') || interceptedRequest.url().endsWith('.jpeg')
-                                //     || interceptedRequest.url().endsWith('.webm') || interceptedRequest.url().endsWith('.ogg') || interceptedRequest.url().endsWith('.mp3') || interceptedRequest.url().endsWith('.wav') || interceptedRequest.url().endsWith('.flac') || interceptedRequest.url().endsWith('.aac')
-                                //     || interceptedRequest.url().endsWith('.woff') || interceptedRequest.url().endsWith('.eot') || interceptedRequest.url().endsWith('.ttf') || interceptedRequest.url().endsWith('.otf')
+                                // if (
+                                //     interceptedRequest.url().endsWith('.js') || 
+                                // interceptedRequest.url().endsWith('.png') || 
+                                // interceptedRequest.url().endsWith('.jpg') || 
+                                // interceptedRequest.url().endsWith('.webp') || 
+                                // interceptedRequest.url().endsWith('.ico') || 
+                                // /* interceptedRequest.url().indexOf('login') > -1 || */ 
+                                // interceptedRequest.url().endsWith('.gif') || 
+                                // interceptedRequest.url().endsWith('.mp4') || 
+                                // interceptedRequest.url().endsWith('.svg') || 
+                                // interceptedRequest.url().endsWith('.jpeg')
+                                // || interceptedRequest.url().endsWith('.webm') || 
+                                // interceptedRequest.url().endsWith('.ogg') || 
+                                // interceptedRequest.url().endsWith('.mp3') || 
+                                // interceptedRequest.url().endsWith('.wav') || 
+                                // interceptedRequest.url().endsWith('.flac') || 
+                                // interceptedRequest.url().endsWith('.aac') || 
+                                // interceptedRequest.url().endsWith('.woff') || 
+                                // interceptedRequest.url().endsWith('.eot') || 
+                                // interceptedRequest.url().endsWith('.ttf') || 
+                                // interceptedRequest.url().endsWith('.otf')
                                 // )
-                                if (
-                                    interceptedRequest.url().endsWith('.js') || 
-                                interceptedRequest.url().endsWith('.png') || 
-                                interceptedRequest.url().endsWith('.jpg') || 
-                                interceptedRequest.url().endsWith('.webp') || 
-                                interceptedRequest.url().endsWith('.ico') || 
-                                /* interceptedRequest.url().indexOf('login') > -1 || */ 
-                                interceptedRequest.url().endsWith('.gif') || 
-                                interceptedRequest.url().endsWith('.mp4') || 
-                                interceptedRequest.url().endsWith('.svg') || 
-                                interceptedRequest.url().endsWith('.jpeg')
-                                || interceptedRequest.url().endsWith('.webm') || 
-                                interceptedRequest.url().endsWith('.ogg') || 
-                                interceptedRequest.url().endsWith('.mp3') || 
-                                interceptedRequest.url().endsWith('.wav') || 
-                                interceptedRequest.url().endsWith('.flac') || 
-                                interceptedRequest.url().endsWith('.aac') || 
-                                interceptedRequest.url().endsWith('.woff') || 
-                                interceptedRequest.url().endsWith('.eot') || 
-                                interceptedRequest.url().endsWith('.ttf') || 
-                                interceptedRequest.url().endsWith('.otf')
-                                )
+                                if (interceptedRequest.resourceType() === 'image' || interceptedRequest.resourceType() === 'font' || interceptedRequest.resourceType() === 'script' || interceptedRequest.resourceType() === 'media')
                                     interceptedRequest.abort();
                                 else
                                     interceptedRequest.continue();
